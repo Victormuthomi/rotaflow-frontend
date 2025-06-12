@@ -63,7 +63,7 @@ export default function RolesPage() {
       ) : (
         <table className="w-full border-collapse">
           <thead>
-            <tr className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+            <tr className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
               <th className="border px-4 py-2 text-left">Name</th>
               <th className="border px-4 py-2 text-left">Description</th>
               <th className="border px-4 py-2 text-center">Actions</th>
@@ -73,7 +73,7 @@ export default function RolesPage() {
             {roles.map((role) => (
               <tr
                 key={role.id}
-                className="hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-100"
               >
                 <td className="border px-4 py-2">{role.name}</td>
                 <td className="border px-4 py-2">{role.description || "-"}</td>

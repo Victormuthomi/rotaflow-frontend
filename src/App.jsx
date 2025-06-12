@@ -11,6 +11,8 @@ import AddEmployee from "./pages/AddEmployee";
 import RolesPage from "./pages/Roles";
 import AddRolePage from "./pages/AddRolePage";
 import EditEmployeePage from "./pages/EditEmployee";
+import UpdateRole from "./pages/UpdateRole";
+import SchedulePage from "./pages/SchedulePage";
 
 function App() {
   return (
@@ -37,6 +39,15 @@ function App() {
         <Route
           path="/employers/:employerId/employees/:id/edit"
           element={<EditEmployeePage />}
+        />
+        <Route
+          path="/employers/:employerId/roles/edit/:id"
+          element={<UpdateRole />}
+        />
+
+        <Route
+          path="/employers/:employerId/schedule"
+          element={<SchedulePage />}
         />
       </Routes>
       <Footer />

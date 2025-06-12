@@ -1,4 +1,3 @@
-// src/components/MainCards.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -8,10 +7,13 @@ export default function MainCards() {
   const [schedules, setSchedules] = useState([]);
   const navigate = useNavigate();
 
-  // Assuming employerId is known or fetched from somewhere; for now hardcoded:
-  const employerId = 1;
+  // Get employerId from localStorage
+  const employer = JSON.parse(localStorage.getItem("employer"));
+  const employerId = employer?.employerId;
 
   useEffect(() => {
+    if (!employerId) return;
+
     // Fetch total employees
     fetch(`/api/employees/employer/${employerId}`)
       .then((res) => res.json())
@@ -61,7 +63,7 @@ export default function MainCards() {
 
       {/* Schedules Card */}
       <div
-        onClick={() => navigate("/schedules")}
+        onClick={() => navigate(`/employers/${employerId}/schedule`)}
         className="cursor-pointer bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition"
       >
         <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">

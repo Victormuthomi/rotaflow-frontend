@@ -1,141 +1,156 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import api from "../api/axios"; // your axios instance
 
-const EditEmployeePage = () => {
-  const { employerId, id } = useParams(); // employeeId is 'id' here
+export default function EditEmployeePage() {
   const navigate = useNavigate();
-
-  const [employee, setEmployee] = useState(null);
-  const [roles, setRoles] = useState([]);
-  const [formData, setFormData] = useState({
+  const { employerId, id } = useParams();
+  const [employeeData, setEmployeeData] = useState({
     name: "",
     nationalId: "",
     phoneNumber: "",
     email: "",
-    role: "",
+    roleId: "",
   });
+  const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState("");
+  const [error, setError] = useState(null);
 
-  // Fetch employee and roles on mount
+  // Fetch employee + employer's roles
   useEffect(() => {
-    const fetchData = async () => {
+    async function fetchData() {
       try {
-        const empRes = await axios.get(
-          `/api/employers/${employerId}/employees`,
-        );
-        const found = empRes.data.find((e) => e.id === id);
-        if (!found) {
-          setMessage("Employee not found");
-          return;
-        }
-
-        const roleRes = await axios.get(`/api/employers/${employerId}/roles`);
-
-        setEmployee(found);
-        setRoles(roleRes.data);
-        setFormData({
-          name: found.name || "",
-          nationalId: found.nationalId || "",
-          phoneNumber: found.phoneNumber || "",
-          email: found.email || "",
-          role: found.role?.name || "",
+        const [empRes, rolesRes] = await Promise.all([
+          api.get(`/employers/${employerId}/employees/${id}`),
+          api.get(`/employers/${employerId}/roles`),
+        ]);
+        setEmployeeData({
+          name: empRes.data.name,
+          nationalId: empRes.data.nationalId,
+          phoneNumber: empRes.data.phoneNumber || "",
+          email: empRes.data.email || "",
+          roleId: empRes.data.role?.id || "",
         });
-      } catch (error) {
-        console.error(error);
-        setMessage("Error loading data");
+        setRoles(rolesRes.data);
+      } catch (err) {
+        setError("Failed to load employee or roles.");
       } finally {
         setLoading(false);
       }
-    };
-
+    }
     fetchData();
   }, [employerId, id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setEmployeeData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("");
-
     try {
-      await axios.put(`/api/employers/${employerId}/employees/${id}`, formData);
-      setMessage("Employee updated successfully");
-      setTimeout(() => navigate(-1), 1500); // Go back after success
-    } catch (error) {
-      console.error(error);
-      setMessage("Failed to update employee");
+      await api.put(`/employers/${employerId}/employees/${id}`, employeeData);
+      navigate(`/employers/${employerId}/employees`);
+    } catch (err) {
+      alert("Failed to update employee.");
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p className="p-4 text-gray-600">Loading...</p>;
+  if (error) return <p className="p-4 text-red-600">Error: {error}</p>;
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-4 bg-white rounded shadow">
-      <h2 className="text-xl font-semibold mb-4">Edit Employee</h2>
-
-      {message && <p className="mb-4 text-blue-500">{message}</p>}
-
+    <div className="max-w-xl mx-auto p-6 bg-white dark:bg-gray-900 shadow rounded-lg">
+      <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
+        Edit Employee
+      </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="Name"
-          className="w-full border p-2 rounded"
-        />
-        <input
-          type="text"
-          name="nationalId"
-          value={formData.nationalId}
-          onChange={handleChange}
-          placeholder="National ID"
-          className="w-full border p-2 rounded"
-        />
-        <input
-          type="text"
-          name="phoneNumber"
-          value={formData.phoneNumber}
-          onChange={handleChange}
-          placeholder="Phone Number"
-          className="w-full border p-2 rounded"
-        />
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="Email"
-          className="w-full border p-2 rounded"
-        />
-        <select
-          name="role"
-          value={formData.role}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-        >
-          <option value="">Select Role</option>
-          {roles.map((r) => (
-            <option key={r.id} value={r.name}>
-              {r.name}
-            </option>
-          ))}
-        </select>
+        <div>
+          <label className="block mb-1 text-sm text-gray-600 dark:text-gray-300">
+            Name
+          </label>
+          <input
+            type="text"
+            name="name"
+            value={employeeData.name}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded dark:bg-gray-800 dark:text-white"
+            required
+          />
+        </div>
+        <div>
+          <label className="block mb-1 text-sm text-gray-600 dark:text-gray-300">
+            National ID
+          </label>
+          <input
+            type="text"
+            name="nationalId"
+            value={employeeData.nationalId}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded dark:bg-gray-800 dark:text-white"
+            required
+          />
+        </div>
+        <div>
+          <label className="block mb-1 text-sm text-gray-600 dark:text-gray-300">
+            Phone
+          </label>
+          <input
+            type="text"
+            name="phoneNumber"
+            value={employeeData.phoneNumber}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded dark:bg-gray-800 dark:text-white"
+          />
+        </div>
+        <div>
+          <label className="block mb-1 text-sm text-gray-600 dark:text-gray-300">
+            Email
+          </label>
+          <input
+            type="email"
+            name="email"
+            value={employeeData.email}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded dark:bg-gray-800 dark:text-white"
+          />
+        </div>
+        <div>
+          <label className="block mb-1 text-sm text-gray-600 dark:text-gray-300">
+            Role
+          </label>
+          <select
+            name="roleId"
+            value={employeeData.roleId}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded dark:bg-gray-800 dark:text-white"
+            required
+          >
+            <option value="">-- Select Role --</option>
+            {roles.map((role) => (
+              <option key={role.id} value={role.id}>
+                {role.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Update Employee
-        </button>
+        <div className="flex justify-between mt-6">
+          <button
+            type="button"
+            onClick={() => navigate(`/employers/${employerId}/employees`)}
+            className="bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-2 rounded"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded"
+          >
+            Update Employee
+          </button>
+        </div>
       </form>
     </div>
   );
-};
-
-export default EditEmployeePage;
+}
