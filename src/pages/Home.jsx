@@ -1,12 +1,12 @@
 import Hero from "../components/Hero";
-import Dashboard from "./Dashboard";
+import DashboardLayout from "./DashboardLayout";
 import useAuth from "../hooks/useAuth";
 
 function Home() {
   const { isLoggedIn } = useAuth();
 
   return isLoggedIn ? (
-    <Dashboard />
+    <DashboardLayout />
   ) : (
     <>
       <Hero />
