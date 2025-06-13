@@ -1,7 +1,10 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api", // 🔁 change this if your backend is hosted elsewhere
+  baseURL:
+    import.meta.env.MODE === "development"
+      ? "http://localhost:5000/api"
+      : "https://rotaflow-backend.onrender.com/api",
   withCredentials: true,
 });
 
