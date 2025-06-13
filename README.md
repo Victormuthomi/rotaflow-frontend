@@ -1,12 +1,115 @@
-# React + Vite
+# RotaFlow Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend for **RotaFlow**, a shift scheduling and workforce management system. It communicates with the backend REST API built using Node.js, Express, and PostgreSQL.
 
-Currently, two official plugins are available:
+The frontend is built using **React**, **Vite**, and **Tailwind CSS** for a fast, responsive, and modern user experience.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 🧰 Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **React** – Component-based UI
+- **Vite** – Lightning-fast frontend tooling
+- **Tailwind CSS** – Utility-first CSS framework
+- **Axios** – HTTP requests to the backend API
+- **React Router** – Routing and navigation
+- **Context API / Redux (if applicable)** – State management
+
+---
+
+## 📦 Project Structure
+
+```bash
+rotaflow-frontend/
+├── public/
+├── src/
+│   ├── assets/
+│   ├── components/
+│   ├── pages/
+│   ├── context/         # Auth or global state
+│   ├── hooks/
+│   ├── services/        # Axios logic for API calls
+│   └── App.jsx
+├── index.html
+├── package.json
+├── tailwind.config.js
+└── vite.config.js
+
+🚀 Getting Started
+1. Clone the Repository
+
+git clone git@github.com:Victormuthomi/rotaflow-frontend.git
+cd rotaflow-frontend
+
+2. Install Dependencies
+
+npm install
+
+3. Run the Development Server
+
+npm run dev
+
+Visit the app in your browser at:
+📍 http://localhost:5173
+🔌 API Configuration
+
+In src/services/api.js (or wherever your Axios instance is), set the base URL:
+
+const API = axios.create({
+  baseURL: "http://localhost:5000/api",
+});
+
+If you use environment variables, create a .env:
+
+VITE_API_URL=http://localhost:5000/api
+
+Then access via:
+
+import.meta.env.VITE_API_URL
+
+🧠 Core Features
+
+    Employer registration and login
+
+    Manage employees
+
+    Manage roles
+
+    Auto-generate and view shift schedules
+
+    Protected routes (requires login)
+
+    Mobile responsive UI
+
+🔗 Backend
+
+RotaFlow backend is built with Node.js and Express.
+📦 Repo: rotaflow-backend
+🖌️ Tailwind CSS
+
+Tailwind config is set up in tailwind.config.js.
+To use custom colors or themes, you can extend the config like:
+
+theme: {
+  extend: {
+    colors: {
+      primary: '#1E40AF',
+    }
+  }
+}
+
+🔐 Auth (Optional Example)
+
+If you use Context API or Redux for managing auth:
+
+// context/AuthContext.jsx
+const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+Use useEffect to check tokens, and use PrivateRoute components to guard protected routes.
+📄 License
+
+MIT License
+🙌 Contributing
+
+Pull requests are welcome! Open an issue or fork the repo and submit a PR.
+```
