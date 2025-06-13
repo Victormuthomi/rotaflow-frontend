@@ -21,7 +21,7 @@ export default function Topbar() {
 
   return (
     <header className="w-full bg-white dark:bg-gray-800 shadow-md px-6 py-4 flex justify-between items-center">
-      <h1 className="text-xl font-semibold text-blue-600 dark:text-white">
+      <h1 className="text-xl font-semibold text-blue-600 dark:text-white ml-4">
         {employer ? `👋 Hello, ${employer.name}` : "Loading..."}
       </h1>
 

@@ -30,7 +30,7 @@ const Navbar = () => {
     <nav className="bg-white dark:bg-gray-900 shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         <Link
-          to="/"
+          to={isLoggedIn ? "/dashboard" : "/"}
           className="text-xl font-bold text-blue-600 dark:text-blue-400"
         >
           RotaFlow

@@ -37,6 +37,11 @@ export default function SchedulePage() {
       });
 
       setResult(grouped);
+      setTimeout(() => {
+        document
+          .getElementById("schedule-results")
+          ?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
     } catch (err) {
       setError(err.response?.data?.message || "Error generating schedule");
     } finally {
@@ -86,150 +91,152 @@ export default function SchedulePage() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-white dark:bg-gray-900 min-h-screen">
-      <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4">
-        Monthly Employee Schedule
-      </h1>
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-6">
+      <div className="max-w-5xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">
+          Monthly Employee Schedule
+        </h1>
 
-      <div className="mb-4 flex gap-4 items-center">
-        <label className="text-gray-700 dark:text-gray-200 font-medium">
-          Rest per week:
-        </label>
-        <input
-          type="number"
-          min="1"
-          max="10"
-          value={restPerWeek}
-          onChange={(e) => setRestPerWeek(Number(e.target.value))}
-          className="p-2 rounded border"
-        />
-        <button
-          onClick={generateSchedule}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          disabled={loading}
-        >
-          {loading ? "Generating..." : "Generate Schedule"}
-        </button>
-      </div>
-
-      {error && <p className="text-red-600">{error}</p>}
-
-      {result && (
-        <div className="mt-6 space-y-12">
-          {Object.entries(result).map(([week, data]) => (
-            <div
-              key={week}
-              className="bg-gray-50 dark:bg-gray-800 p-4 rounded shadow"
-            >
-              <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                Week {week}
-              </h2>
-
-              {/* Working Table */}
-              <div className="mb-6">
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="text-xl font-bold text-blue-700 dark:text-blue-300">
-                    Working Employees
-                  </h3>
-                  <button
-                    onClick={() =>
-                      printSection(
-                        `week-${week}-working`,
-                        `Week ${week} - Working Employees`,
-                      )
-                    }
-                    className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-                  >
-                    Print Working
-                  </button>
-                </div>
-                <div id={`week-${week}-working`}>
-                  <table className="w-full text-sm">
-                    <thead className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
-                      <tr>
-                        <th className="border px-4 py-2">No</th>
-                        <th className="border px-4 py-2">Name</th>
-                        <th className="border px-4 py-2">Role</th>
-                        <th className="border px-4 py-2">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.working.map((item, index) => (
-                        <tr
-                          key={item.id}
-                          className="hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-800 dark:text-gray-100"
-                        >
-                          <td className="border px-4 py-2">{index + 1}</td>
-                          <td className="border px-4 py-2">
-                            {item.employeeName}
-                          </td>
-                          <td className="border px-4 py-2">
-                            {item.employeeRole}
-                          </td>
-                          <td className="border px-4 py-2 capitalize">
-                            {item.status}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Resting Table */}
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="text-xl font-bold text-purple-700 dark:text-purple-300">
-                    Resting Employees
-                  </h3>
-                  <button
-                    onClick={() =>
-                      printSection(
-                        `week-${week}-resting`,
-                        `Week ${week} - Resting Employees`,
-                      )
-                    }
-                    className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-                  >
-                    Print Resting
-                  </button>
-                </div>
-                <div id={`week-${week}-resting`}>
-                  <table className="w-full text-sm">
-                    <thead className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
-                      <tr>
-                        <th className="border px-4 py-2">No</th>
-                        <th className="border px-4 py-2">Name</th>
-                        <th className="border px-4 py-2">Role</th>
-                        <th className="border px-4 py-2">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.resting.map((item, index) => (
-                        <tr
-                          key={item.id}
-                          className="hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-800 dark:text-gray-100"
-                        >
-                          <td className="border px-4 py-2">{index + 1}</td>
-                          <td className="border px-4 py-2">
-                            {item.employeeName}
-                          </td>
-                          <td className="border px-4 py-2">
-                            {item.employeeRole}
-                          </td>
-                          <td className="border px-4 py-2 capitalize">
-                            {item.status}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className="mb-6 flex gap-4 flex-wrap items-center">
+          <label className="text-gray-700 dark:text-gray-200 font-medium">
+            Rest days per week:
+          </label>
+          <input
+            type="number"
+            min="1"
+            max="10"
+            value={restPerWeek}
+            onChange={(e) => setRestPerWeek(Number(e.target.value))}
+            className="p-2 border rounded dark:bg-gray-800 dark:text-white"
+          />
+          <button
+            onClick={generateSchedule}
+            disabled={loading}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            {loading ? "Generating..." : "Generate Schedule"}
+          </button>
         </div>
-      )}
+
+        {error && <p className="text-red-600 font-medium">{error}</p>}
+
+        {result && (
+          <div id="schedule-results" className="mt-10 space-y-12">
+            {Object.entries(result).map(([week, data]) => (
+              <div
+                key={week}
+                className="bg-white dark:bg-gray-800 p-6 rounded shadow"
+              >
+                <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
+                  Week {week}
+                </h2>
+
+                {/* Working Table */}
+                <div className="mb-6">
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="text-xl font-bold text-blue-700 dark:text-blue-300">
+                      Working Employees
+                    </h3>
+                    <button
+                      onClick={() =>
+                        printSection(
+                          `week-${week}-working`,
+                          `Week ${week} - Working Employees`,
+                        )
+                      }
+                      className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                    >
+                      Print
+                    </button>
+                  </div>
+                  <div id={`week-${week}-working`}>
+                    <table className="w-full text-sm">
+                      <thead className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                        <tr>
+                          <th>No</th>
+                          <th>Name</th>
+                          <th>Role</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.working.map((item, index) => (
+                          <tr
+                            key={item.id}
+                            className="hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-800 dark:text-gray-100"
+                          >
+                            <td className="border px-4 py-2">{index + 1}</td>
+                            <td className="border px-4 py-2">
+                              {item.employeeName}
+                            </td>
+                            <td className="border px-4 py-2">
+                              {item.employeeRole}
+                            </td>
+                            <td className="border px-4 py-2 capitalize">
+                              {item.status}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Resting Table */}
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="text-xl font-bold text-purple-700 dark:text-purple-300">
+                      Resting Employees
+                    </h3>
+                    <button
+                      onClick={() =>
+                        printSection(
+                          `week-${week}-resting`,
+                          `Week ${week} - Resting Employees`,
+                        )
+                      }
+                      className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                    >
+                      Print
+                    </button>
+                  </div>
+                  <div id={`week-${week}-resting`}>
+                    <table className="w-full text-sm">
+                      <thead className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                        <tr>
+                          <th>No</th>
+                          <th>Name</th>
+                          <th>Role</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.resting.map((item, index) => (
+                          <tr
+                            key={item.id}
+                            className="hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-800 dark:text-gray-100"
+                          >
+                            <td className="border px-4 py-2">{index + 1}</td>
+                            <td className="border px-4 py-2">
+                              {item.employeeName}
+                            </td>
+                            <td className="border px-4 py-2">
+                              {item.employeeRole}
+                            </td>
+                            <td className="border px-4 py-2 capitalize">
+                              {item.status}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

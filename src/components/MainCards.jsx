@@ -36,7 +36,7 @@ export default function Dashboard() {
 
   return (
     <div className="p-6 bg-white dark:bg-gray-900 min-h-screen">
-      <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-6">
+      <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-6 ml-8">
         Dashboard Overview
       </h2>
 
