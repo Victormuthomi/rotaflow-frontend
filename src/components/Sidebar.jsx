@@ -8,17 +8,30 @@ import {
   FaSignOutAlt,
   FaBars,
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
+  const navigate = useNavigate();
+
+  const employer = JSON.parse(localStorage.getItem("employer") || "{}");
+  const employerId = employer?.employerId;
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("employer");
+    navigate("/login");
+  };
 
   const navItems = [
     { name: "Employees", icon: <FaUser />, path: "/employees" },
     { name: "Roles", icon: <FaBriefcase />, path: "/roles" },
-    { name: "Schedules", icon: <FaCalendarAlt />, path: "/schedules" },
+    {
+      name: "Schedules",
+      icon: <FaCalendarAlt />,
+      path: `/employers/${employerId}/schedule`,
+    },
     { name: "Profile", icon: <FaUserCircle />, path: "/profile" },
-    { name: "Logout", icon: <FaSignOutAlt />, path: "/logout" },
   ];
 
   return (
@@ -54,6 +67,17 @@ export default function Sidebar() {
             {isOpen && <span className="ml-3">{item.name}</span>}
           </Link>
         ))}
+
+        {/* Logout */}
+        <button
+          onClick={handleLogout}
+          className="flex items-center w-full text-left p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+        >
+          <span className="text-xl">
+            <FaSignOutAlt />
+          </span>
+          {isOpen && <span className="ml-3">Logout</span>}
+        </button>
       </nav>
     </aside>
   );

@@ -1,47 +1,33 @@
 // src/components/Topbar.jsx
 import { useEffect, useState } from "react";
+import api from "../api/axios";
 
 export default function Topbar() {
-  const [greeting, setGreeting] = useState("");
-  const [darkMode, setDarkMode] = useState(false);
+  const [employer, setEmployer] = useState(null);
+
+  const employerData = JSON.parse(localStorage.getItem("employer") || "{}");
+  const employerId = employerData?.employerId;
 
   useEffect(() => {
-    // Greeting logic based on time
-    const hour = new Date().getHours();
-    if (hour < 12) setGreeting("Good Morning");
-    else if (hour < 18) setGreeting("Good Afternoon");
-    else setGreeting("Good Evening");
+    if (!employerId) return;
 
-    // Check system preference for dark mode
-    const prefersDark =
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setDarkMode(prefersDark);
-
-    // Apply initial theme
-    document.documentElement.classList.toggle("dark", prefersDark);
-  }, []);
-
-  const toggleDarkMode = () => {
-    setDarkMode((prev) => {
-      const newMode = !prev;
-      document.documentElement.classList.toggle("dark", newMode);
-      return newMode;
-    });
-  };
+    api
+      .get(`/employers/${employerId}`)
+      .then((res) => setEmployer(res.data))
+      .catch((err) => {
+        console.error("Failed to fetch employer details", err);
+      });
+  }, [employerId]);
 
   return (
-    <header className="flex items-center justify-between bg-white dark:bg-gray-900 p-4 shadow-md fixed w-full top-0 left-0 z-10">
-      <div className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-        {greeting}, Victor
+    <header className="w-full bg-white dark:bg-gray-800 shadow-md px-6 py-4 flex justify-between items-center">
+      <h1 className="text-xl font-semibold text-blue-600 dark:text-white">
+        {employer ? `👋 Hello, ${employer.name}` : "Loading..."}
+      </h1>
+
+      <div className="text-gray-600 dark:text-gray-300 text-sm hidden md:block">
+        {employer?.email && <span>{employer.email}</span>}
       </div>
-      <button
-        onClick={toggleDarkMode}
-        className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded"
-        aria-label="Toggle Dark Mode"
-      >
-        {darkMode ? "🌙 Dark" : "☀️ Light"}
-      </button>
     </header>
   );
 }

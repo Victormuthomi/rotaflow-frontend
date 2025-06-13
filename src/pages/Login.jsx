@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import api from "../api/axios";
 
 function Login() {
@@ -7,6 +9,7 @@ function Login() {
     nationalId: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -25,11 +28,8 @@ function Login() {
       });
 
       const { token, ...employer } = res.data;
-
-      // Save both token and full employer object
       localStorage.setItem("token", token);
       localStorage.setItem("employer", JSON.stringify(employer));
-
       navigate("/dashboard");
     } catch (err) {
       console.error("❌ Login error:", err);
@@ -38,9 +38,9 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-blue-50 px-4">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center text-blue-600">
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900 px-4">
+      <div className="w-full max-w-md bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+        <h2 className="text-2xl font-semibold text-center text-blue-600 dark:text-blue-400 mb-6">
           Employer Login
         </h2>
 
@@ -55,29 +55,44 @@ function Login() {
             placeholder="National ID"
             value={form.nationalId}
             onChange={handleChange}
-            className="w-full border px-4 py-2 rounded"
             required
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            className="w-full border px-4 py-2 rounded"
-            required
-          />
+
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute top-2 right-3 text-gray-600 dark:text-gray-400"
+              tabIndex={-1}
+            >
+              <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+            </button>
+          </div>
+
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition"
           >
             Login
           </button>
         </form>
 
-        <p className="text-sm text-center text-gray-600 mt-4">
+        <p className="text-sm text-center text-gray-600 dark:text-gray-400 mt-4">
           Don’t have an account?{" "}
-          <Link to="/register" className="text-blue-600 hover:underline">
+          <Link
+            to="/register"
+            className="text-blue-600 hover:underline dark:text-blue-400"
+          >
             Register
           </Link>
         </p>
