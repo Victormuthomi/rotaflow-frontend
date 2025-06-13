@@ -24,8 +24,12 @@ function Login() {
         password: form.password,
       });
 
-      const { token } = res.data;
+      const { token, ...employer } = res.data;
+
+      // Save both token and full employer object
       localStorage.setItem("token", token);
+      localStorage.setItem("employer", JSON.stringify(employer));
+
       navigate("/dashboard");
     } catch (err) {
       console.error("❌ Login error:", err);

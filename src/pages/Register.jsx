@@ -13,15 +13,19 @@ function Register() {
     password: "",
     confirmPassword: "",
   });
+
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
-  const handleChange = (e) =>
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
 
     if (form.password !== form.confirmPassword) {
       setError("Passwords do not match.");
@@ -29,7 +33,7 @@ function Register() {
     }
 
     try {
-      const res = await api.post("/employers/register", {
+      await api.post("/employers/register", {
         name: form.name,
         nationalId: form.nationalId,
         phoneNumber: form.phoneNumber,
@@ -39,9 +43,10 @@ function Register() {
         password: form.password,
       });
 
-      const employer = res.data;
-      localStorage.setItem("employer", JSON.stringify(employer));
-      navigate("/dashboard");
+      setSuccess("Registration successful! Redirecting to login...");
+      setTimeout(() => {
+        navigate("/login");
+      }, 3000); // Redirect after 3 seconds
     } catch (err) {
       console.error("❌ Registration error:", err);
       setError(err?.response?.data?.message || "Registration failed.");
@@ -57,6 +62,9 @@ function Register() {
 
         {error && (
           <p className="text-red-500 text-sm text-center mb-4">{error}</p>
+        )}
+        {success && (
+          <p className="text-green-600 text-sm text-center mb-4">{success}</p>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">

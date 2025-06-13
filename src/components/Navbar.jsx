@@ -1,27 +1,28 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth"; // adjust path
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-
-  // TODO: Replace this with actual auth logic
-  const isLoggedIn = false;
+  const { isLoggedIn } = useAuth();
+  const navigate = useNavigate();
 
   const toggleMenu = () => setIsOpen(!isOpen);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("employer");
+    navigate("/login");
+  };
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-        {/* Logo */}
         <Link to="/" className="text-xl font-bold text-blue-600">
           RotaFlow
         </Link>
 
-        {/* Desktop Links */}
         <div className="hidden md:flex gap-6 items-center">
-          <Link to="/" className="text-gray-700 hover:text-blue-600">
-            Home
-          </Link>
           {isLoggedIn ? (
             <>
               <Link
@@ -30,10 +31,33 @@ const Navbar = () => {
               >
                 Dashboard
               </Link>
-              <button className="text-red-500 hover:underline">Logout</button>
+              <Link
+                to="/employees"
+                className="text-gray-700 hover:text-blue-600"
+              >
+                Employees
+              </Link>
+              <Link to="/roles" className="text-gray-700 hover:text-blue-600">
+                Roles
+              </Link>
+              <Link
+                to={`/employers/${JSON.parse(localStorage.getItem("employer"))?.employerId}/schedule`}
+                className="text-gray-700 hover:text-blue-600"
+              >
+                Schedule
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="text-red-500 hover:underline"
+              >
+                Logout
+              </button>
             </>
           ) : (
             <>
+              <Link to="/" className="text-gray-700 hover:text-blue-600">
+                Home
+              </Link>
               <Link to="/login" className="text-gray-700 hover:text-blue-600">
                 Login
               </Link>
@@ -47,12 +71,11 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Hamburger Button */}
         <div className="md:hidden">
           <button
             onClick={toggleMenu}
             className="text-gray-700 focus:outline-none"
-            aria-label="Toggle Menu"
           >
             {isOpen ? (
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24">
@@ -75,12 +98,9 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Dropdown */}
+      {/* Mobile dropdown */}
       {isOpen && (
         <div className="md:hidden px-4 pb-4 space-y-2">
-          <Link to="/" className="block text-gray-700 hover:text-blue-600">
-            Home
-          </Link>
           {isLoggedIn ? (
             <>
               <Link
@@ -89,12 +109,36 @@ const Navbar = () => {
               >
                 Dashboard
               </Link>
-              <button className="block text-red-500 hover:underline">
+              <Link
+                to="/employees"
+                className="block text-gray-700 hover:text-blue-600"
+              >
+                Employees
+              </Link>
+              <Link
+                to="/roles"
+                className="block text-gray-700 hover:text-blue-600"
+              >
+                Roles
+              </Link>
+              <Link
+                to={`/employers/${JSON.parse(localStorage.getItem("employer"))?.employerId}/schedule`}
+                className="block text-gray-700 hover:text-blue-600"
+              >
+                Schedule
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="block text-red-500 hover:underline"
+              >
                 Logout
               </button>
             </>
           ) : (
             <>
+              <Link to="/" className="block text-gray-700 hover:text-blue-600">
+                Home
+              </Link>
               <Link
                 to="/login"
                 className="block text-gray-700 hover:text-blue-600"
