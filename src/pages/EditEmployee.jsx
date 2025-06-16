@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import api from "../api/axios"; // your axios instance
+import { ImSpinner9 } from "react-icons/im";
+import api from "../api/axios";
 
 export default function EditEmployeePage() {
   const navigate = useNavigate();
   const { employerId, id } = useParams();
+
   const [employeeData, setEmployeeData] = useState({
     name: "",
     nationalId: "",
@@ -55,8 +57,19 @@ export default function EditEmployeePage() {
     }
   };
 
-  if (loading) return <p className="p-4 text-gray-600">Loading...</p>;
-  if (error) return <p className="p-4 text-red-600">Error: {error}</p>;
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+        <ImSpinner9 className="animate-spin text-3xl text-blue-600 dark:text-blue-400" />
+      </div>
+    );
+
+  if (error)
+    return (
+      <p className="p-4 text-red-600 text-center bg-white dark:bg-gray-900">
+        Error: {error}
+      </p>
+    );
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-10 px-4">
@@ -78,6 +91,7 @@ export default function EditEmployeePage() {
               required
             />
           </div>
+
           <div>
             <label className="block mb-1 text-sm text-gray-600 dark:text-gray-300">
               National ID
@@ -91,6 +105,7 @@ export default function EditEmployeePage() {
               required
             />
           </div>
+
           <div>
             <label className="block mb-1 text-sm text-gray-600 dark:text-gray-300">
               Phone
@@ -103,6 +118,7 @@ export default function EditEmployeePage() {
               className="w-full px-3 py-2 border rounded dark:bg-gray-800 dark:text-white"
             />
           </div>
+
           <div>
             <label className="block mb-1 text-sm text-gray-600 dark:text-gray-300">
               Email
@@ -115,6 +131,7 @@ export default function EditEmployeePage() {
               className="w-full px-3 py-2 border rounded dark:bg-gray-800 dark:text-white"
             />
           </div>
+
           <div>
             <label className="block mb-1 text-sm text-gray-600 dark:text-gray-300">
               Role
