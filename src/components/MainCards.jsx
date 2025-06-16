@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUsers, FaUserTag, FaCalendarAlt } from "react-icons/fa";
+import { ImSpinner9 } from "react-icons/im";
 import api from "../api/axios";
 
 export default function Dashboard() {
   const [employeesCount, setEmployeesCount] = useState(0);
   const [rolesCount, setRolesCount] = useState(0);
   const [schedulesCount, setSchedulesCount] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
   const employer = JSON.parse(localStorage.getItem("employer") || "{}");
@@ -15,24 +17,39 @@ export default function Dashboard() {
   useEffect(() => {
     if (!employerId) return;
 
-    api
-      .get(`/employers/${employerId}/employees`)
-      .then((res) => setEmployeesCount(res.data?.length || 0))
-      .catch(() => setEmployeesCount(0));
+    const fetchData = async () => {
+      try {
+        const [employeesRes, rolesRes, schedulesRes] = await Promise.all([
+          api.get(`/employers/${employerId}/employees`),
+          api.get(`/employers/${employerId}/roles`),
+          api.get(`/employers/${employerId}/schedules`),
+        ]);
 
-    api
-      .get(`/employers/${employerId}/roles`)
-      .then((res) => setRolesCount(res.data?.length || 0))
-      .catch(() => setRolesCount(0));
+        setEmployeesCount(employeesRes.data?.length || 0);
+        setRolesCount(rolesRes.data?.length || 0);
+        setSchedulesCount(schedulesRes.data?.length || 0);
+      } catch (err) {
+        setEmployeesCount(0);
+        setRolesCount(0);
+        setSchedulesCount(0);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    api
-      .get(`/employers/${employerId}/schedules`)
-      .then((res) => setSchedulesCount(res.data?.length || 0))
-      .catch(() => setSchedulesCount(0));
+    fetchData();
   }, [employerId]);
 
   const cardBase =
     "flex items-center p-6 rounded-lg shadow border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 cursor-pointer hover:shadow-lg transition";
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+        <ImSpinner9 className="animate-spin text-blue-600 text-4xl" />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-white dark:bg-gray-900 min-h-screen">
