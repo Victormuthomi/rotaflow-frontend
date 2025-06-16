@@ -43,9 +43,7 @@ export default function EmployeesPage() {
     if (!window.confirm("Are you sure you want to delete this employee?"))
       return;
 
-    console.log("Deleting employee with ID:", id, "Employer ID:", employerId);
     setDeletingId(id);
-
     try {
       await api.delete(`/employers/${employerId}/employees/${id}`);
       setEmployees((prev) => prev.filter((emp) => emp.id !== id));
@@ -86,12 +84,14 @@ export default function EmployeesPage() {
         </h2>
         <div className="space-x-3">
           <button
+            type="button"
             onClick={() => navigate(`/employers/${employerId}/employees/add`)}
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded cursor-pointer"
           >
             + Add Employee
           </button>
           <button
+            type="button"
             onClick={handlePrint}
             className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded cursor-pointer print:hidden"
           >
@@ -165,6 +165,7 @@ export default function EmployeesPage() {
                     </td>
                     <td className="px-4 py-2 text-center space-x-3 print:hidden">
                       <button
+                        type="button"
                         onClick={() =>
                           navigate(
                             `/employers/${employerId}/employees/${id}/edit`,
@@ -175,6 +176,7 @@ export default function EmployeesPage() {
                         Update
                       </button>
                       <button
+                        type="button"
                         onClick={() => handleDelete(id)}
                         disabled={deletingId === id}
                         className={`text-red-600 hover:text-red-800 font-semibold ${
