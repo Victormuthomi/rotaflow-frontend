@@ -47,9 +47,9 @@ export default function Dashboard() {
     "flex items-center p-6 rounded-lg shadow border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 cursor-pointer hover:shadow-lg transition";
 
   const chartData = [
-    { name: "Employees", value: employeesCount },
-    { name: "Roles", value: rolesCount },
-    { name: "Schedules", value: schedulesCount },
+    { name: "Employees", value: employeesCount, fill: "#3B82F6" }, // Blue
+    { name: "Roles", value: rolesCount, fill: "#10B981" }, // Green
+    { name: "Schedules", value: schedulesCount, fill: "#8B5CF6" }, // Purple
   ];
 
   if (loading) {
@@ -101,18 +101,22 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Bar Chart */}
-      <div className="mt-10 p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+      {/* Bar Chart Card */}
+      <div className="mt-10 p-6 rounded-lg shadow border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 max-w-4xl mx-auto">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
           Overview Comparison
         </h3>
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={250}>
           <BarChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis allowDecimals={false} />
             <Tooltip />
-            <Bar dataKey="value" fill="#6366F1" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="value">
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
