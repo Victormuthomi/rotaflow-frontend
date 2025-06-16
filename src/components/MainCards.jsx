@@ -101,30 +101,30 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* First Chart Card (Employees vs Roles) */}
-      <div className="mt-10 p-6 rounded-lg shadow border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 max-w-4xl mx-auto">
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
-          Employee to Role Comparison
-        </h3>
-        <ResponsiveContainer width="100%" height={200}>
-          <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis allowDecimals={false} />
-            <Tooltip />
-            <Bar dataKey="value">
-              {chartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.fill} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      {/* Charts Section */}
+      <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto">
+        {/* Bar Chart Card */}
+        <div className="p-6 rounded-lg shadow border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
+            Employee to Role Comparison
+          </h3>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis allowDecimals={false} />
+              <Tooltip />
+              <Bar dataKey="value">
+                {chartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.fill} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
 
-      {/* Placeholder for future chart */}
-      <div className="mt-6 p-6 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 max-w-4xl mx-auto text-center text-gray-400 dark:text-gray-500">
-        {/* Empty chart space */}
-        Future chart area
+        {/* Placeholder for Future Chart */}
+        <div className="p-6 rounded-lg shadow border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800"></div>
       </div>
     </div>
   );
