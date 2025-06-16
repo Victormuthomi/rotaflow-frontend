@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ImSpinner9 } from "react-icons/im";
 import api from "../api/axios";
 
 export default function RolesPage() {
@@ -46,6 +47,14 @@ export default function RolesPage() {
   if (!employerId)
     return <p className="p-4 text-red-600">Please login again.</p>;
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+        <ImSpinner9 className="animate-spin text-blue-600 text-4xl" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <div className="p-6 max-w-4xl mx-auto">
@@ -69,9 +78,7 @@ export default function RolesPage() {
           </div>
         </div>
 
-        {loading ? (
-          <p className="text-gray-700 dark:text-gray-300">Loading roles...</p>
-        ) : error ? (
+        {error ? (
           <p className="text-red-600">{error}</p>
         ) : roles.length === 0 ? (
           <p className="text-gray-700 dark:text-gray-300">
