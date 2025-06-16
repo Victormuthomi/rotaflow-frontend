@@ -47,7 +47,7 @@ export default function EmployeesPage() {
     setDeletingId(id);
     try {
       const response = await api.delete(
-        `/employers/${employerId}/employees/${id}`, // No /api here
+        `/employers/${employerId}/employees/${id}`,
       );
 
       if (response.status === 200) {
