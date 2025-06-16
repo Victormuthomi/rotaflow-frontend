@@ -40,19 +40,29 @@ export default function EmployeesPage() {
   }, [employerId]);
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this employee?"))
+    if (!window.confirm("Are you sure you want to delete this employee?")) {
       return;
+    }
 
     setDeletingId(id);
     try {
-      await api.delete(`/employers/${employerId}/employees/${id}`);
-      setEmployees((prev) => prev.filter((emp) => emp.id !== id));
+      const response = await api.delete(
+        `/employers/${employerId}/employees/${id}`,
+      );
+
+      if (response.status === 200) {
+        setEmployees((prev) => prev.filter((emp) => emp.id !== id));
+        // Optional: Show a success message
+        alert(response.data.message || "Employee deleted successfully");
+      } else {
+        throw new Error(response.data.message || "Failed to delete employee");
+      }
     } catch (err) {
       console.error("Delete error:", err);
       alert(
         err.response?.data?.message ||
           err.message ||
-          "Failed to delete employee",
+          "Failed to delete employee. Please try again.",
       );
     } finally {
       setDeletingId(null);
