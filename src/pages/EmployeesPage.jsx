@@ -8,6 +8,7 @@ export default function EmployeesPage() {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   const employerData = localStorage.getItem("employer");
   const employerId = employerData ? JSON.parse(employerData).employerId : null;
@@ -34,6 +35,7 @@ export default function EmployeesPage() {
         setLoading(false);
       }
     }
+
     fetchEmployees();
   }, [employerId]);
 
@@ -41,15 +43,21 @@ export default function EmployeesPage() {
     if (!window.confirm("Are you sure you want to delete this employee?"))
       return;
 
+    console.log("Deleting employee with ID:", id, "Employer ID:", employerId);
+    setDeletingId(id);
+
     try {
       await api.delete(`/employers/${employerId}/employees/${id}`);
       setEmployees((prev) => prev.filter((emp) => emp.id !== id));
     } catch (err) {
+      console.error("Delete error:", err);
       alert(
         err.response?.data?.message ||
           err.message ||
           "Failed to delete employee",
       );
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -79,13 +87,13 @@ export default function EmployeesPage() {
         <div className="space-x-3">
           <button
             onClick={() => navigate(`/employers/${employerId}/employees/add`)}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded cursor-pointer"
           >
             + Add Employee
           </button>
           <button
             onClick={handlePrint}
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded print:hidden"
+            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded cursor-pointer print:hidden"
           >
             🖨️ Print
           </button>
@@ -162,15 +170,20 @@ export default function EmployeesPage() {
                             `/employers/${employerId}/employees/${id}/edit`,
                           )
                         }
-                        className="text-blue-600 hover:text-blue-800 font-semibold"
+                        className="text-blue-600 hover:text-blue-800 font-semibold cursor-pointer"
                       >
                         Update
                       </button>
                       <button
                         onClick={() => handleDelete(id)}
-                        className="text-red-600 hover:text-red-800 font-semibold"
+                        disabled={deletingId === id}
+                        className={`text-red-600 hover:text-red-800 font-semibold ${
+                          deletingId === id
+                            ? "opacity-50 cursor-not-allowed"
+                            : "cursor-pointer"
+                        }`}
                       >
-                        Delete
+                        {deletingId === id ? "Deleting..." : "Delete"}
                       </button>
                     </td>
                   </tr>
