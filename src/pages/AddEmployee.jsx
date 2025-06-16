@@ -53,10 +53,37 @@ export default function AddEmployeePage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
+  function validateForm() {
+    const phoneRegex = /^[0-9]{10}$/;
+    const idRegex = /^[0-9]{7,8}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!idRegex.test(formData.nationalId)) {
+      return "National ID must be 7 or 8 digits.";
+    }
+
+    if (!phoneRegex.test(formData.phoneNumber)) {
+      return "Phone number must be exactly 10 digits.";
+    }
+
+    if (!emailRegex.test(formData.email)) {
+      return "Invalid email address.";
+    }
+
+    return null;
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
-    setLoading(true);
     setError(null);
+    setLoading(true);
+
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      setLoading(false);
+      return;
+    }
 
     try {
       await api.post(`/employers/${employerId}/employees`, formData);
@@ -116,6 +143,7 @@ export default function AddEmployeePage() {
               value={formData.nationalId}
               onChange={handleChange}
               className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:text-white"
+              placeholder="7 or 8 digits"
             />
           </div>
 
@@ -126,6 +154,7 @@ export default function AddEmployeePage() {
             <input
               type="tel"
               name="phoneNumber"
+              required
               value={formData.phoneNumber}
               onChange={handleChange}
               className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:text-white"
@@ -140,6 +169,7 @@ export default function AddEmployeePage() {
             <input
               type="email"
               name="email"
+              required
               value={formData.email}
               onChange={handleChange}
               className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:text-white"
