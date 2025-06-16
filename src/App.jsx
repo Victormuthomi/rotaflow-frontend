@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react"; // ✅ Import Vercel Analytics
+import { Toaster } from "react-hot-toast";
 
 import Home from "./pages/Home";
 import DashboardLayout from "./pages/DashboardLayout";
@@ -53,6 +54,9 @@ function App() {
       </Routes>
 
       <Footer />
+
+      {/* ✅ Toast Notifications */}
+      <Toaster position="top-right" reverseOrder={false} />
 
       {/* ✅ Analytics component goes here to track all pages */}
       <Analytics />
