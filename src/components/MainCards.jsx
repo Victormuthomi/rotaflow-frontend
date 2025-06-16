@@ -124,7 +124,6 @@ export default function Dashboard() {
         </div>
 
         {/* Placeholder for Future Chart */}
-        <div className="p-6 rounded-lg shadow border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800"></div>
       </div>
     </div>
   );
