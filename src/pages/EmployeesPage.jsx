@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ImSpinner9 } from "react-icons/im";
 import api from "../api/axios";
 
 export default function EmployeesPage() {
@@ -7,6 +8,7 @@ export default function EmployeesPage() {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   const employerData = localStorage.getItem("employer");
   const employerId = employerData ? JSON.parse(employerData).employerId : null;
@@ -33,6 +35,7 @@ export default function EmployeesPage() {
         setLoading(false);
       }
     }
+
     fetchEmployees();
   }, [employerId]);
 
@@ -40,15 +43,21 @@ export default function EmployeesPage() {
     if (!window.confirm("Are you sure you want to delete this employee?"))
       return;
 
+    console.log("Deleting employee with ID:", id, "Employer ID:", employerId);
+    setDeletingId(id);
+
     try {
       await api.delete(`/employers/${employerId}/employees/${id}`);
       setEmployees((prev) => prev.filter((emp) => emp.id !== id));
     } catch (err) {
+      console.error("Delete error:", err);
       alert(
         err.response?.data?.message ||
           err.message ||
           "Failed to delete employee",
       );
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -56,8 +65,17 @@ export default function EmployeesPage() {
     window.print();
   };
 
-  if (loading) return <p className="p-4 text-gray-600">Loading employees...</p>;
-  if (error) return <p className="p-4 text-red-600">Error: {error}</p>;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+        <ImSpinner9 className="animate-spin text-blue-600 text-4xl" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <p className="p-4 text-red-600">Error: {error}</p>;
+  }
 
   return (
     <div className="p-6 bg-white dark:bg-gray-900 min-h-screen print:p-2 print:bg-white">
@@ -69,13 +87,13 @@ export default function EmployeesPage() {
         <div className="space-x-3">
           <button
             onClick={() => navigate(`/employers/${employerId}/employees/add`)}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded cursor-pointer"
           >
             + Add Employee
           </button>
           <button
             onClick={handlePrint}
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded print:hidden"
+            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded cursor-pointer print:hidden"
           >
             🖨️ Print
           </button>
@@ -152,15 +170,20 @@ export default function EmployeesPage() {
                             `/employers/${employerId}/employees/${id}/edit`,
                           )
                         }
-                        className="text-blue-600 hover:text-blue-800 font-semibold"
+                        className="text-blue-600 hover:text-blue-800 font-semibold cursor-pointer"
                       >
                         Update
                       </button>
                       <button
                         onClick={() => handleDelete(id)}
-                        className="text-red-600 hover:text-red-800 font-semibold"
+                        disabled={deletingId === id}
+                        className={`text-red-600 hover:text-red-800 font-semibold ${
+                          deletingId === id
+                            ? "opacity-50 cursor-not-allowed"
+                            : "cursor-pointer"
+                        }`}
                       >
-                        Delete
+                        {deletingId === id ? "Deleting..." : "Delete"}
                       </button>
                     </td>
                   </tr>
