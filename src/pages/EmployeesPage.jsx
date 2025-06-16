@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ImSpinner9 } from "react-icons/im";
 import api from "../api/axios";
 
 export default function EmployeesPage() {
@@ -56,8 +57,17 @@ export default function EmployeesPage() {
     window.print();
   };
 
-  if (loading) return <p className="p-4 text-gray-600">Loading employees...</p>;
-  if (error) return <p className="p-4 text-red-600">Error: {error}</p>;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+        <ImSpinner9 className="animate-spin text-blue-600 text-4xl" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <p className="p-4 text-red-600">Error: {error}</p>;
+  }
 
   return (
     <div className="p-6 bg-white dark:bg-gray-900 min-h-screen print:p-2 print:bg-white">
