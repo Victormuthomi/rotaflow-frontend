@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react"; // ✅ Import Vercel Analytics
+
 import Home from "./pages/Home";
 import DashboardLayout from "./pages/DashboardLayout";
 import Print from "./pages/Print";
@@ -44,13 +46,16 @@ function App() {
           path="/employers/:employerId/roles/edit/:id"
           element={<UpdateRole />}
         />
-
         <Route
           path="/employers/:employerId/schedule"
           element={<SchedulePage />}
         />
       </Routes>
+
       <Footer />
+
+      {/* ✅ Analytics component goes here to track all pages */}
+      <Analytics />
     </Router>
   );
 }
