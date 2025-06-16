@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ImSpinner9 } from "react-icons/im";
 import api from "../api/axios";
+import toast from "react-hot-toast";
 
 export default function EmployeesPage() {
   const navigate = useNavigate();
@@ -52,13 +53,13 @@ export default function EmployeesPage() {
 
       if (response.status === 200) {
         setEmployees((prev) => prev.filter((emp) => emp.id !== id));
-        alert(response.data.message || "Employee deleted successfully");
+        toast.success(response.data.message || "Employee deleted successfully");
       } else {
         throw new Error(response.data.message || "Failed to delete employee");
       }
     } catch (err) {
       console.error("Delete error:", err);
-      alert(
+      toast.error(
         err.response?.data?.message ||
           err.message ||
           "Failed to delete employee. Please try again.",
