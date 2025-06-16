@@ -47,12 +47,11 @@ export default function EmployeesPage() {
     setDeletingId(id);
     try {
       const response = await api.delete(
-        `/employers/${employerId}/employees/${id}`,
+        `/employers/${employerId}/employees/${id}`, // No /api here
       );
 
       if (response.status === 200) {
         setEmployees((prev) => prev.filter((emp) => emp.id !== id));
-        // Optional: Show a success message
         alert(response.data.message || "Employee deleted successfully");
       } else {
         throw new Error(response.data.message || "Failed to delete employee");
