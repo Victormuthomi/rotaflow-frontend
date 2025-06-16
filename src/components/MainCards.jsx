@@ -7,6 +7,7 @@ export default function Dashboard() {
   const [employeesCount, setEmployeesCount] = useState(0);
   const [rolesCount, setRolesCount] = useState(0);
   const [schedulesCount, setSchedulesCount] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
   const employer = JSON.parse(localStorage.getItem("employer") || "{}");
@@ -15,24 +16,34 @@ export default function Dashboard() {
   useEffect(() => {
     if (!employerId) return;
 
-    api
-      .get(`/employers/${employerId}/employees`)
-      .then((res) => setEmployeesCount(res.data?.length || 0))
-      .catch(() => setEmployeesCount(0));
+    Promise.all([
+      api
+        .get(`/employers/${employerId}/employees`)
+        .then((res) => setEmployeesCount(res.data?.length || 0))
+        .catch(() => setEmployeesCount(0)),
 
-    api
-      .get(`/employers/${employerId}/roles`)
-      .then((res) => setRolesCount(res.data?.length || 0))
-      .catch(() => setRolesCount(0));
+      api
+        .get(`/employers/${employerId}/roles`)
+        .then((res) => setRolesCount(res.data?.length || 0))
+        .catch(() => setRolesCount(0)),
 
-    api
-      .get(`/employers/${employerId}/schedules`)
-      .then((res) => setSchedulesCount(res.data?.length || 0))
-      .catch(() => setSchedulesCount(0));
+      api
+        .get(`/employers/${employerId}/schedules`)
+        .then((res) => setSchedulesCount(res.data?.length || 0))
+        .catch(() => setSchedulesCount(0)),
+    ]).finally(() => setLoading(false));
   }, [employerId]);
 
   const cardBase =
     "flex items-center p-6 rounded-lg shadow border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 cursor-pointer hover:shadow-lg transition";
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-white dark:bg-gray-900">
+        <div className="w-12 h-12 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-white dark:bg-gray-900 min-h-screen">
