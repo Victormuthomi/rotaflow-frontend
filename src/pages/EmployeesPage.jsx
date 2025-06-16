@@ -45,11 +45,7 @@ export default function EmployeesPage() {
 
     setDeletingId(id);
     try {
-      await api.delete(`/employees/${id}`, {
-        headers: {
-          "x-employer-id": employerId,
-        },
-      });
+      await api.delete(`/employers/${employerId}/employees/${id}`);
       setEmployees((prev) => prev.filter((emp) => emp.id !== id));
     } catch (err) {
       console.error("Delete error:", err);
