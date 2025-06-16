@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { ImSpinner9 } from "react-icons/im";
 import api from "../api/axios"; // Your axios instance
 
 export default function UpdateRole() {
@@ -7,7 +8,8 @@ export default function UpdateRole() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({ name: "", description: "" });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // for initial fetch
+  const [submitting, setSubmitting] = useState(false); // for form submit
   const [error, setError] = useState(null);
 
   // Fetch existing role data
@@ -36,15 +38,31 @@ export default function UpdateRole() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setSubmitting(true);
       await api.put(`/employers/${employerId}/roles/${id}`, formData);
-      navigate(`/roles`);
+      navigate(`/employers/${employerId}/roles`);
     } catch (err) {
       alert("Failed to update role.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  if (loading) return <p className="p-4 text-gray-600">Loading...</p>;
-  if (error) return <p className="p-4 text-red-600">Error: {error}</p>;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+        <ImSpinner9 className="animate-spin text-3xl text-blue-600 dark:text-blue-400" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <p className="p-4 text-red-600 text-center bg-white dark:bg-gray-900">
+        Error: {error}
+      </p>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-10 px-4">
@@ -84,14 +102,23 @@ export default function UpdateRole() {
               type="button"
               onClick={() => navigate(`/employers/${employerId}/roles`)}
               className="bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-2 rounded"
+              disabled={submitting}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded"
+              disabled={submitting}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded flex items-center justify-center gap-2"
             >
-              Update Role
+              {submitting ? (
+                <>
+                  <ImSpinner9 className="animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                "Update Role"
+              )}
             </button>
           </div>
         </form>
