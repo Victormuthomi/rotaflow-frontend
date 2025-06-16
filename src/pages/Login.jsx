@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { ImSpinner9 } from "react-icons/im";
 import api from "../api/axios";
 
 function Login() {
@@ -11,6 +12,7 @@ function Login() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -20,6 +22,7 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
       const res = await api.post("/employers/login", {
@@ -34,6 +37,8 @@ function Login() {
     } catch (err) {
       console.error("❌ Login error:", err);
       setError(err?.response?.data?.message || "Login failed.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,6 +61,7 @@ function Login() {
             value={form.nationalId}
             onChange={handleChange}
             required
+            disabled={loading}
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
@@ -67,6 +73,7 @@ function Login() {
               value={form.password}
               onChange={handleChange}
               required
+              disabled={loading}
               className="w-full px-4 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
@@ -81,9 +88,14 @@ function Login() {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition"
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition flex items-center justify-center"
           >
-            Login
+            {loading ? (
+              <ImSpinner9 className="animate-spin text-white text-lg" />
+            ) : (
+              "Login"
+            )}
           </button>
         </form>
 
