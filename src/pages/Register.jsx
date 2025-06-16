@@ -3,6 +3,16 @@ import { useNavigate, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import api from "../api/axios";
+import Spinner from "../components/Spinner";
+
+const commonWeakPasswords = [
+  "123456",
+  "password",
+  "123456789",
+  "12345678",
+  "qwerty",
+  "abc123",
+];
 
 function Register() {
   const [form, setForm] = useState({
@@ -20,10 +30,45 @@ function Register() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const validateForm = () => {
+    const phoneRegex = /^[0-9]{10}$/;
+    const idRegex = /^[0-9]{7,8}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const strongPasswordRegex =
+      /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (!phoneRegex.test(form.phoneNumber)) {
+      return "Phone number must be exactly 10 digits.";
+    }
+
+    if (!idRegex.test(form.nationalId)) {
+      return "National ID must be 7 or 8 digits.";
+    }
+
+    if (!emailRegex.test(form.email)) {
+      return "Invalid email address.";
+    }
+
+    if (commonWeakPasswords.includes(form.password)) {
+      return "Password is too common. Please choose a stronger password.";
+    }
+
+    if (!strongPasswordRegex.test(form.password)) {
+      return "Password must be at least 8 characters, include a letter, a number, and a special character.";
+    }
+
+    if (form.password !== form.confirmPassword) {
+      return "Passwords do not match.";
+    }
+
+    return null;
   };
 
   const handleSubmit = async (e) => {
@@ -31,10 +76,13 @@ function Register() {
     setError("");
     setSuccess("");
 
-    if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match.");
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
       return;
     }
+
+    setLoading(true);
 
     try {
       await api.post("/employers/register", {
@@ -54,6 +102,8 @@ function Register() {
     } catch (err) {
       console.error("Registration error:", err);
       setError(err?.response?.data?.message || "Registration failed.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -139,8 +189,9 @@ function Register() {
           <button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition"
+            disabled={loading}
           >
-            Register
+            {loading ? <Spinner size={20} /> : "Register"}
           </button>
         </form>
 
