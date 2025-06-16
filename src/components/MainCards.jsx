@@ -122,8 +122,6 @@ export default function Dashboard() {
             </BarChart>
           </ResponsiveContainer>
         </div>
-
-        {/* Placeholder for Future Chart */}
       </div>
     </div>
   );
